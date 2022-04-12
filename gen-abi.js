@@ -1,6 +1,6 @@
 const fs = require("fs");
 
-const Contracts = ["Apple", "Banana", "Coconut", "Durian", "BUSD"]
+const Contracts = ["Apple", "Banana", "Coconut", "Durian"]
 
 function genAbi() {
     fs.access("./build/contracts", (err) => {

@@ -1,3 +1,7 @@
+# Borabora V1
+
+This repo is home to the Borabora Widgets package and the DApps [borabora.fi](https://borabora.fi).
+
 ## Project setup
 ```
 truffle compile
