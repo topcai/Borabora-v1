@@ -5,7 +5,7 @@ import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "../library/MerkleProof.sol";
 import "../interface/ITokenInterface.sol";
 
-contract ERC20Basic is ERC20, MerkleProof {
+contract BEP20Basic is ERC20, MerkleProof {
 
     address private owner;
 
@@ -13,9 +13,7 @@ contract ERC20Basic is ERC20, MerkleProof {
 
     bytes32 private merkleBonusRoot;
 
-    mapping(address => bool) public owner_admin;
-
-    mapping(address => bool) public whiteBounsAddr;
+    mapping(address => bool) public claimBonusUsers;
 
     mapping(address => bool) public whiteTransAddr;
 
@@ -23,27 +21,15 @@ contract ERC20Basic is ERC20, MerkleProof {
 
     bool public _open_claim_bonus;
 
-    constructor (string memory name_,string memory symbol_,uint256 totalSupply_,address[] memory whiteAddress,address[] memory owners) ERC20(name_,symbol_) {
+    constructor (string memory name_,string memory symbol_,uint256 totalSupply_,address[] memory whiteAddress) ERC20(name_,symbol_) {
         owner = msg.sender;
-        if (owners.length > 0) {
-            setOwnerAdmin(owners);
-        }
         setWhiteAddress(whiteAddress);
         _mint(owner, totalSupply_);
     }
 
      modifier onlyOwner() {
-        require(msg.sender == owner || owner_admin[msg.sender], "Only Owner can transfer Money");
+        require(msg.sender == owner, "Only Owner can transfer Token");
         _;
-    }
-
-    function setOwnerAdmin(address[] memory _owners) public onlyOwner returns (bool) {
-        for (uint i = 0;i<_owners.length;i++) {
-            if (!owner_admin[_owners[i]]) {
-                owner_admin[_owners[i]] = true;
-            }
-        }
-        return true;
     }
 
     function burn(uint256 amount) public returns (bool) {
@@ -57,7 +43,7 @@ contract ERC20Basic is ERC20, MerkleProof {
     }
 
     function transferFrom(address from, address to, uint256 amount) public virtual override returns (bool) {
-        require(whiteTransAddr[to] || owner_admin[from] || from == owner, "The receiving address can only be the contract Address");
+        require(whiteTransAddr[to] || from == owner, "The receiving address can only be the contract Address");
         _spendAllowance(from, msg.sender, amount);
         _transfer(from, to, amount);
         return true;
@@ -83,34 +69,33 @@ contract ERC20Basic is ERC20, MerkleProof {
         return true;
     }
 
-    function whitelistBeInvitedClaim(uint256 amount,bytes32[] memory _merkleProof) internal view returns (bool) {
+    function whiteListBeInvitedClaim(uint256 amount,bytes32[] memory _merkleProof) internal view returns (bool) {
         bytes32 leaf = keccak256(abi.encodePacked(msg.sender,amount));
         require(verify(_merkleProof,merkleInviteWhiteRoot,leaf), "Invalid proof Claimed");
         return true;
     }
 
-    function whitelistInvitedClaim(uint256 invitedPeople,uint256 invitedTotal,uint256 amount,bytes32[] memory _merkleProof) internal view returns (bool) {
+    function whiteListInvitedClaim(uint256 invitedPeople,uint256 invitedTotal,uint256 amount,bytes32[] memory _merkleProof) internal view returns (bool) {
         bytes32 leaf = keccak256(abi.encodePacked(invitedPeople,invitedTotal,msg.sender,amount));
         require(verify(_merkleProof,merkleInviteWhiteRoot,leaf), "Invalid proof Claimed");
         return true;
     }
 
-    function bounslistClaim(uint256 amount,bytes32[] memory _merkleProof) internal view returns (bool) {
+    function bonusListClaim(uint256 amount,bytes32[] memory _merkleProof) internal view returns (bool) {
         bytes32 leaf = keccak256(abi.encodePacked(msg.sender,amount));
         require(verify(_merkleProof,merkleBonusRoot,leaf), "Invalid proof Bouns");
         return true;
     }
 
-    // 瓜分奖池
     function claimBonus(uint256 amount,bytes32[] memory _merkleProof,address tokenAddress) public {
         require(_open_claim_bonus, "Not open yet Claim");
-        require(!whiteBounsAddr[msg.sender], 'Drop already Bonus');
-        require(bounslistClaim(amount,_merkleProof));
-        whiteBounsAddr[msg.sender] = true;
-        _claimBouns(amount,tokenAddress);
+        require(!claimBonusUsers[msg.sender], "Drop already Bonus");
+        require(bonusListClaim(amount,_merkleProof));
+        claimBonusUsers[msg.sender] = true;
+        _claimBonus(amount,tokenAddress);
     }
 
-    function _claimBouns(uint256 amount,address tokenAddress) private {
+    function _claimBonus(uint256 amount,address tokenAddress) private {
         IToken token = IToken(tokenAddress);
         uint256 _balances = token.balanceOf(address(this));
         require(_balances >= amount, "Insufficient Banlance Bonus");

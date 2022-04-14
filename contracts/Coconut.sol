@@ -1,20 +1,18 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import "./ERC20/ERC20Basic.sol";
+import "./BEP20/BEP20Basic.sol";
 import "./interface/ITokenInterface.sol";
 
-contract Coconut is ERC20Basic {
+contract Coconut is BEP20Basic {
 
     bool public checkTokenAddress = false;
 
     mapping(address => bool) public claimedUser;
 
-    uint256 public MINT_TOTAL_MAX;
+    uint256 public MINT_TOTAL_MAX = 1000000000000000000000;
 
-    constructor (string memory name_,string memory symbol_,uint256 totalSupply_,uint256 mint_total_max_,address[] memory whiteAddress, address[] memory owners) ERC20Basic(name_, symbol_,totalSupply_,whiteAddress, owners) {
-        MINT_TOTAL_MAX = mint_total_max_;
-    }
+    constructor (address[] memory whiteAddress) BEP20Basic("Coconut","Coc",100000000000000000000000000,whiteAddress) {}
 
     function claim(uint256 amount,address tokenAddress) public {
         require(_open_receive, "Not open yet Claim");

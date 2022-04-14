@@ -1,22 +1,18 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import "./ERC20/ERC20Basic.sol";
+import "./BEP20/BEP20Basic.sol";
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 import "./interface/ITokenInterface.sol";
 
-contract Durian is ERC20Basic {
+contract Durian is BEP20Basic {
     using SafeMath for uint;
 
-    uint256 public _token_apple_base;
-    uint256 public _token_banana_base;
-    uint256 public _token_coconut_base;
+    uint256 public _token_apple_base = 1000;
+    uint256 public _token_banana_base = 300;
+    uint256 public _token_coconut_base = 1000;
 
-    constructor (string memory name_,string memory symbol_,uint256 totalSupply_,address[] memory whiteAddress,uint256[] memory token_base,address[] memory owners) ERC20Basic(name_, symbol_,totalSupply_,whiteAddress, owners) {
-        _token_apple_base = token_base[0];
-        _token_banana_base = token_base[1];
-        _token_coconut_base = token_base[2];
-    }
+    constructor (address[] memory whiteAddress) BEP20Basic("Durian","Dur",100000000000000000000000000,whiteAddress) {}
 
     function mintToken(uint256 amount,address[] memory tokenAddress) public {
         require(_open_receive, "Not open yet Minter");

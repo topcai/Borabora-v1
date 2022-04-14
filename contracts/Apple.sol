@@ -1,16 +1,14 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import "./ERC20/ERC20Basic.sol";
+import "./BEP20/BEP20Basic.sol";
 
-contract Apple is ERC20Basic {
+contract Apple is BEP20Basic {
     mapping(address => uint) public claimIndex;
 
-    uint256 public _MAX_CLAIM_TOTAL;
+    uint256 public _MAX_CLAIM_TOTAL = 500000000000000000000;
 
-    constructor (string memory name_,string memory symbol_,uint256 totalSupply_,uint256 maxClaimTotal_,address[] memory whiteAddress,address[] memory owners) ERC20Basic(name_, symbol_,totalSupply_,whiteAddress, owners) {
-        _MAX_CLAIM_TOTAL = maxClaimTotal_;
-    }
+    constructor (address[] memory whiteAddress) BEP20Basic("Apple", "app", 100000000000000000000000000, whiteAddress) {}
 
     function claim() public {
         require(_open_receive, "Not open yet Claim");
@@ -22,7 +20,7 @@ contract Apple is ERC20Basic {
     function claimIncome(uint256 amount,bytes32[] memory _merkleProof) public {
         require(_open_receive, "Not open yet Claim");
         require(claimIndex[msg.sender] == 1, "Claim once Income");
-        require(whitelistBeInvitedClaim(amount,_merkleProof));
+        require(whiteListBeInvitedClaim(amount,_merkleProof));
         claimIndex[msg.sender] = 2;
         _claim(amount);
     }
