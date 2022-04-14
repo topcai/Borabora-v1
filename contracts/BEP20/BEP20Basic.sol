@@ -28,7 +28,7 @@ contract BEP20Basic is ERC20, MerkleProof {
     }
 
      modifier onlyOwner() {
-        require(msg.sender == owner, "Only owner can transfer token");
+        require(msg.sender == owner, "Only owner can execute");
         _;
     }
 

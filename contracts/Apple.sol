@@ -12,14 +12,14 @@ contract Apple is BEP20Basic {
 
     function claim() public {
         require(_open_receive, "Claim has not yet started");
-        require(claimIndex[msg.sender] == 0, "The bonus can only be claimed once");
+        require(claimIndex[msg.sender] == 0, "The token can only be claimed once");
         claimIndex[msg.sender] = 1;
         _claim(_MAX_CLAIM_TOTAL);
     }
 
     function claimIncome(uint256 amount,bytes32[] memory _merkleProof) public {
         require(_open_receive, "Claim has not yet started");
-        require(claimIndex[msg.sender] == 1, "The bonus can only be claimed once");
+        require(claimIndex[msg.sender] == 1, "The token can only be claimed once");
         require(whiteListBeInvitedClaim(amount,_merkleProof));
         claimIndex[msg.sender] = 2;
         _claim(amount);
