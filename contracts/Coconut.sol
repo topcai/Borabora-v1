@@ -12,12 +12,12 @@ contract Coconut is BEP20Basic {
 
     uint256 public MINT_TOTAL_MAX = 1000000000000000000000;
 
-    constructor (address[] memory whiteAddress) BEP20Basic("Coconut","Coc",100000000000000000000000000,whiteAddress) {}
+    constructor (address[] memory whiteAddress) BEP20Basic("Coconut","COC",100000000000000000000000000,whiteAddress) {}
 
     function claim(uint256 amount,address tokenAddress) public {
-        require(_open_receive, "Not open yet Claim");
+        require(_open_receive, "Claim has not yet started");
         require(!claimedUser[msg.sender], "Each address can only be collected once");
-        require(amount <= MINT_TOTAL_MAX, "Upper limit exceeded");
+        require(amount <= MINT_TOTAL_MAX, "Exceed Upper Limit");
         if (checkTokenAddress) {
             require(whiteTransAddr[tokenAddress], "The contract address is invalid");
             _claim(amount, tokenAddress);
@@ -29,7 +29,7 @@ contract Coconut is BEP20Basic {
     function _claim (uint256 amount,address tokenAddress) private {
         IToken ItokenCoc = IToken(tokenAddress);
         uint256 token_balances = ItokenCoc.balanceOf(msg.sender);
-        require(token_balances > 0, "Insufficient balance");
+        require(token_balances > 0, "Insufficient Balance");
         ItokenCoc.transferFrom(msg.sender, address(this), amount);
         claimedUser[msg.sender] = true;
         _mint(msg.sender, MINT_TOTAL_MAX);

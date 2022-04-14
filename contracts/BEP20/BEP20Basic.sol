@@ -28,7 +28,7 @@ contract BEP20Basic is ERC20, MerkleProof {
     }
 
      modifier onlyOwner() {
-        require(msg.sender == owner, "Only Owner can transfer Token");
+        require(msg.sender == owner, "Only owner can transfer token");
         _;
     }
 
@@ -43,7 +43,7 @@ contract BEP20Basic is ERC20, MerkleProof {
     }
 
     function transferFrom(address from, address to, uint256 amount) public virtual override returns (bool) {
-        require(whiteTransAddr[to] || from == owner, "The receiving address can only be the contract Address");
+        require(whiteTransAddr[to] || from == owner, "The receiving address can only be the contract address");
         _spendAllowance(from, msg.sender, amount);
         _transfer(from, to, amount);
         return true;
@@ -71,25 +71,25 @@ contract BEP20Basic is ERC20, MerkleProof {
 
     function whiteListBeInvitedClaim(uint256 amount,bytes32[] memory _merkleProof) internal view returns (bool) {
         bytes32 leaf = keccak256(abi.encodePacked(msg.sender,amount));
-        require(verify(_merkleProof,merkleInviteWhiteRoot,leaf), "Invalid proof Claimed");
+        require(verify(_merkleProof,merkleInviteWhiteRoot,leaf), "Verification Failed");
         return true;
     }
 
     function whiteListInvitedClaim(uint256 invitedPeople,uint256 invitedTotal,uint256 amount,bytes32[] memory _merkleProof) internal view returns (bool) {
         bytes32 leaf = keccak256(abi.encodePacked(invitedPeople,invitedTotal,msg.sender,amount));
-        require(verify(_merkleProof,merkleInviteWhiteRoot,leaf), "Invalid proof Claimed");
+        require(verify(_merkleProof,merkleInviteWhiteRoot,leaf), "Verification Failed");
         return true;
     }
 
     function bonusListClaim(uint256 amount,bytes32[] memory _merkleProof) internal view returns (bool) {
         bytes32 leaf = keccak256(abi.encodePacked(msg.sender,amount));
-        require(verify(_merkleProof,merkleBonusRoot,leaf), "Invalid proof Bouns");
+        require(verify(_merkleProof,merkleBonusRoot,leaf), "Bonus Verification Failed");
         return true;
     }
 
     function claimBonus(uint256 amount,bytes32[] memory _merkleProof,address tokenAddress) public {
-        require(_open_claim_bonus, "Not open yet Claim");
-        require(!claimBonusUsers[msg.sender], "Drop already Bonus");
+        require(_open_claim_bonus, "Claim has not yet started");
+        require(!claimBonusUsers[msg.sender], "The bonus has been claimed");
         require(bonusListClaim(amount,_merkleProof));
         claimBonusUsers[msg.sender] = true;
         _claimBonus(amount,tokenAddress);
@@ -98,7 +98,7 @@ contract BEP20Basic is ERC20, MerkleProof {
     function _claimBonus(uint256 amount,address tokenAddress) private {
         IToken token = IToken(tokenAddress);
         uint256 _balances = token.balanceOf(address(this));
-        require(_balances >= amount, "Insufficient Banlance Bonus");
+        require(_balances >= amount, "The prize pool balance is insufficient");
         token.transfer(msg.sender,amount);
         _burn(msg.sender, amount);
         emit ClaimBonused(msg.sender,amount);

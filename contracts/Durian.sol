@@ -12,11 +12,11 @@ contract Durian is BEP20Basic {
     uint256 public _token_banana_base = 300;
     uint256 public _token_coconut_base = 1000;
 
-    constructor (address[] memory whiteAddress) BEP20Basic("Durian","Dur",100000000000000000000000000,whiteAddress) {}
+    constructor (address[] memory whiteAddress) BEP20Basic("Durian","DUR",100000000000000000000000000,whiteAddress) {}
 
     function mintToken(uint256 amount,address[] memory tokenAddress) public {
-        require(_open_receive, "Not open yet Minter");
-        require(whiteTransAddr[tokenAddress[0]] && whiteTransAddr[tokenAddress[1]] && whiteTransAddr[tokenAddress[2]], "The Mined token must be Apple+Banana+Coconut");
+        require(_open_receive, "Mint has not yet started");
+        require(whiteTransAddr[tokenAddress[0]] && whiteTransAddr[tokenAddress[1]] && whiteTransAddr[tokenAddress[2]], "You must have Apple, Banana, Coconut token to mint Durian token");
         IToken tokenApple = IToken(tokenAddress[0]);
         IToken tokenBanana = IToken(tokenAddress[1]);
         IToken tokenCoconut = IToken(tokenAddress[2]);
@@ -29,9 +29,9 @@ contract Durian is BEP20Basic {
         uint256 banana_amount = _token_banana_base.mul(amount);
         uint256 coconut_amount = _token_coconut_base.mul(amount);
 
-        require(token_apple_balance >= apple_amount, "Apple Token Insufficient Balance");
-        require(token_banana_balance >= banana_amount, "Banana Token Insufficient Balance");
-        require(token_coconut_balance >= coconut_amount, "Coconut Token Insufficient Balance");
+        require(token_apple_balance >= apple_amount, "Insufficient Apple Token");
+        require(token_banana_balance >= banana_amount, "Insufficient Banana Token");
+        require(token_coconut_balance >= coconut_amount, "Insufficient Coconut Token");
 
         tokenApple.transferFrom(msg.sender, address(this), apple_amount);
         tokenBanana.transferFrom(msg.sender, address(this), banana_amount);

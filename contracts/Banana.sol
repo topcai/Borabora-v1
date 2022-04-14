@@ -9,11 +9,11 @@ contract Banana is BEP20Basic {
 
     mapping(address => uint256) public _invitedTotal; 
 
-    constructor (address[] memory whiteAddress) BEP20Basic("Banana","Ban", 100000000000000000000000000, whiteAddress) {}
+    constructor (address[] memory whiteAddress) BEP20Basic("Banana","BAN", 100000000000000000000000000, whiteAddress) {}
 
     function claim(uint256 amount,uint256 invitedPeople,uint256 invitedTotal,bytes32[] memory _merkleProof) public {
-        require(_open_receive, "Not open yet claim");
-        require(invitedTotal > _invitedTotal[msg.sender], "Can not receive Claimed");
+        require(_open_receive, "Claim has not yet started");
+        require(invitedTotal > _invitedTotal[msg.sender], "Claim Failed");
         require(whiteListInvitedClaim(invitedPeople,invitedTotal,amount,_merkleProof));
         _invitedTotal[msg.sender] = invitedTotal;
         _mint(msg.sender, amount);
