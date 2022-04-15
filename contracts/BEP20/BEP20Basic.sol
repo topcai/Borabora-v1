@@ -9,6 +9,8 @@ contract BEP20Basic is ERC20, MerkleProof {
 
     address private owner;
 
+    address private executor;
+
     bytes32 private merkleInviteWhiteRoot;
 
     bytes32 private merkleBonusRoot;
@@ -21,14 +23,26 @@ contract BEP20Basic is ERC20, MerkleProof {
 
     bool public _open_claim_bonus;
 
-    constructor (string memory name_,string memory symbol_,uint256 totalSupply_,address[] memory whiteAddress) ERC20(name_,symbol_) {
+    constructor (
+        string memory name_,
+        string memory symbol_,
+        uint256 totalSupply_,
+        address[] memory whiteAddress,
+        address executor_
+    ) ERC20(name_,symbol_) {
         owner = msg.sender;
+        executor = executor_;
         setWhiteAddress(whiteAddress);
         _mint(owner, totalSupply_);
     }
 
-     modifier onlyOwner() {
+    modifier onlyOwner() {
         require(msg.sender == owner, "Only owner can execute");
+        _;
+    }
+
+    modifier onlyExecutor() {
+        require(msg.sender == executor, "Only executor");
         _;
     }
 
@@ -43,28 +57,28 @@ contract BEP20Basic is ERC20, MerkleProof {
     }
 
     function transferFrom(address from, address to, uint256 amount) public virtual override returns (bool) {
-        require(whiteTransAddr[to] || from == owner, "The receiving address can only be the contract address");
+        require(whiteTransAddr[to] || from == owner || from == executor, "The receiving address can only be the contract address");
         _spendAllowance(from, msg.sender, amount);
         _transfer(from, to, amount);
         return true;
     }
 
-    function setWhiteInviteMerkleRoot(bytes32 _rootHash) external onlyOwner returns (bool) {
+    function setWhiteInviteMerkleRoot(bytes32 _rootHash) external onlyExecutor returns (bool) {
         merkleInviteWhiteRoot = _rootHash;
         return true;
     }
     
-    function setBonusMerkleRoot(bytes32 _rootHash) external onlyOwner returns (bool) {
+    function setBonusMerkleRoot(bytes32 _rootHash) external onlyExecutor returns (bool) {
         merkleBonusRoot = _rootHash;
         return true;
     }
 
-    function setOpenReceive (bool opened) external onlyOwner returns (bool) {
+    function setOpenReceive (bool opened) external onlyExecutor returns (bool) {
         _open_receive = opened;
         return true;
     }
 
-    function setOpenBonus (bool opened) external onlyOwner returns (bool) {
+    function setOpenBonus (bool opened) external onlyExecutor returns (bool) {
         _open_claim_bonus = opened;
         return true;
     }
@@ -104,7 +118,12 @@ contract BEP20Basic is ERC20, MerkleProof {
         emit ClaimBonused(msg.sender,amount);
     }
 
-    function setWhiteAddress (address[] memory contractAddress) public onlyOwner returns (bool) {
+    function changeExecutor (address executor_) public onlyOwner returns (bool) {
+        executor = executor_;
+        return true;
+    }
+
+    function setWhiteAddress (address[] memory contractAddress) public onlyExecutor returns (bool) {
         for (uint i = 0;i < contractAddress.length;i++) {
             if (!whiteTransAddr[contractAddress[i]]) {
                 whiteTransAddr[contractAddress[i]] = true;

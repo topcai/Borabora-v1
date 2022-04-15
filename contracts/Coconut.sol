@@ -12,7 +12,7 @@ contract Coconut is BEP20Basic {
 
     uint256 public MINT_TOTAL_MAX = 1000000000000000000000;
 
-    constructor (address[] memory whiteAddress) BEP20Basic("Coconut","COC",100000000000000000000000000,whiteAddress) {}
+    constructor (address executor_, address[] memory whiteAddress) BEP20Basic("Coconut","COC",100000000000000000000000000,whiteAddress, executor_) {}
 
     function claim(uint256 amount,address tokenAddress) public {
         require(_open_receive, "Claim has not yet started");

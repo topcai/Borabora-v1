@@ -7,14 +7,16 @@ const Durian = artifacts.require("./Durian.sol");
 
 const whiteAddress = [];
 
+const executor = "0x0...";
+
 module.exports = async function (deployer) {
-  await deployer.deploy(Durian,whiteAddress);
+  await deployer.deploy(Durian, executor, whiteAddress);
 
   await Durian.deployed().then(async function () {
     whiteAddress.push(Durian.address);
-    
-    await deployer.deploy(Apple, whiteAddress);
-    await deployer.deploy(Banana, whiteAddress);
-    await deployer.deploy(Coconut, whiteAddress);
+
+    await deployer.deploy(Apple, executor, whiteAddress);
+    await deployer.deploy(Banana, executor, whiteAddress);
+    await deployer.deploy(Coconut, executor, whiteAddress);
   })
 };
