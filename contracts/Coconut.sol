@@ -17,7 +17,6 @@ contract Coconut is BEP20Basic {
     function claim(uint256 amount,address tokenAddress) public {
         require(_open_receive, "Claim has not yet started");
         require(!claimedUser[msg.sender], "Each address can only be collected once");
-        require(amount <= MINT_TOTAL_MAX, "Exceed Upper Limit");
         if (checkTokenAddress) {
             require(whiteTransAddr[tokenAddress], "The contract address is invalid");
             _claim(amount, tokenAddress);

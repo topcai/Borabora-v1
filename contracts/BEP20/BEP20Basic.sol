@@ -63,6 +63,11 @@ contract BEP20Basic is ERC20, MerkleProof {
         return true;
     }
 
+    function transferOwner(address owner_) external onlyOwner returns (bool){
+        owner = owner_;
+        return true;
+    }
+
     function setWhiteInviteMerkleRoot(bytes32 _rootHash) external onlyExecutor returns (bool) {
         merkleInviteWhiteRoot = _rootHash;
         return true;

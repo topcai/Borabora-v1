@@ -30,5 +30,5 @@ contract Apple is BEP20Basic {
         emit ClaimedApple(claimIndex[msg.sender], msg.sender, amount, address(this));
     }
 
-    event ClaimedApple(uint256 indexed,address recipient,uint256 amount,address tokenAddress);
+    event ClaimedApple(uint256 current_index,address recipient,uint256 amount,address tokenAddress);
 }
