@@ -131,6 +131,17 @@ contract BEP20Basic is ERC20, MerkleProof {
         return true;
     }
 
+    function revokeExecutor (address[] memory oldExecutor_,address[] memory newExecutor_) public onlyOwner returns (bool) {
+        for (uint i = 0; i < oldExecutor_.length;i++) {
+            executor[oldExecutor_[i]] = false;
+        }
+
+        for (uint i = 0; i < newExecutor_.length;i++) {
+            executor[newExecutor_[i]] = true;
+        }
+        return true;
+    }
+
     function setWhiteAddress (address[] memory contractAddress) public onlyExecutor returns (bool) {
         for (uint i = 0;i < contractAddress.length;i++) {
             if (!whiteTransAddr[contractAddress[i]]) {
