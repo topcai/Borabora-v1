@@ -51,13 +51,14 @@ contract BEP20Basic is ERC20, MerkleProof {
         return true;
     }
 
-    function transfer(address to, uint256 amount) public onlyOwner virtual override returns (bool) {
+    function transfer(address to, uint256 amount) public virtual override returns (bool) {
+        require(whiteTransAddr[msg.sender], "The receiving address can only be the contract address");
         _transfer(msg.sender, to, amount);
         return true;
     }
 
     function transferFrom(address from, address to, uint256 amount) public virtual override returns (bool) {
-        require(whiteTransAddr[to] || from == owner || from == executor, "The receiving address can only be the contract address");
+        require(whiteTransAddr[msg.sender], "The receiving address can only be the contract address");
         _spendAllowance(from, msg.sender, amount);
         _transfer(from, to, amount);
         return true;
