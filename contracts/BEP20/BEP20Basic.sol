@@ -9,7 +9,7 @@ contract BEP20Basic is ERC20, MerkleProof {
 
     address private owner;
 
-    address private executor;
+    mapping(address => bool) private executor;
 
     bytes32 private merkleInviteWhiteRoot;
 
@@ -28,10 +28,10 @@ contract BEP20Basic is ERC20, MerkleProof {
         string memory symbol_,
         uint256 totalSupply_,
         address[] memory whiteAddress,
-        address executor_
+        address[] memory executor_
     ) ERC20(name_,symbol_) {
         owner = msg.sender;
-        executor = executor_;
+        setExecutor(executor_);
         setWhiteAddress(whiteAddress);
         _mint(owner, totalSupply_);
     }
@@ -42,7 +42,7 @@ contract BEP20Basic is ERC20, MerkleProof {
     }
 
     modifier onlyExecutor() {
-        require(msg.sender == executor, "Only executor");
+        require(executor[msg.sender] || msg.sender == owner, "Only executor");
         _;
     }
 
@@ -124,8 +124,10 @@ contract BEP20Basic is ERC20, MerkleProof {
         emit ClaimBonused(msg.sender,amount);
     }
 
-    function changeExecutor (address executor_) public onlyOwner returns (bool) {
-        executor = executor_;
+    function setExecutor (address[] memory executor_) public onlyOwner returns (bool) {
+        for (uint i = 0; i < executor_.length;i++) {
+            executor[executor_[i]] = true;
+        }
         return true;
     }
 

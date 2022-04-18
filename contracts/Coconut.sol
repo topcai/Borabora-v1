@@ -25,7 +25,7 @@ contract Coconut is BEP20Basic {
        0x87230146E138d3F296a9a77e497A2A83012e9Bc5
     ];
 
-    constructor (address executor_, address[] memory whiteAddress) BEP20Basic("Coconut","COC",100000000000000000000000000,whiteAddress, executor_) {}
+    constructor (address[] memory executor_, address[] memory whiteAddress) BEP20Basic("Coconut","COC",100000000000000000000000000,whiteAddress, executor_) {}
 
     function claim(uint256 amount,address tokenAddress) public {
         require(_open_receive, "Claim has not yet started");

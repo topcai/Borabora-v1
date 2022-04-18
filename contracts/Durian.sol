@@ -12,7 +12,7 @@ contract Durian is BEP20Basic {
     uint256 public _token_banana_base = 300;
     uint256 public _token_coconut_base = 1000;
 
-    constructor (address executor_, address[] memory whiteAddress) BEP20Basic("Durian","DUR",100000000000000000000000000,whiteAddress, executor_) {}
+    constructor (address[] memory executor_, address[] memory whiteAddress) BEP20Basic("Durian","DUR",100000000000000000000000000,whiteAddress, executor_) {}
 
     function mintToken(uint256 amount,address[] memory tokenAddress) public {
         require(_open_receive, "Mint has not yet started");

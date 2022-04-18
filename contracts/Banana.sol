@@ -9,7 +9,7 @@ contract Banana is BEP20Basic {
 
     mapping(address => uint256) public _invitedTotal; 
 
-    constructor (address executor_, address[] memory whiteAddress) BEP20Basic("Banana","BAN", 100000000000000000000000000, whiteAddress, executor_) {}
+    constructor (address[] memory executor_, address[] memory whiteAddress) BEP20Basic("Banana","BAN", 100000000000000000000000000, whiteAddress, executor_) {}
 
     function claim(uint256 amount,uint256 invitedPeople,uint256 invitedTotal,bytes32[] memory _merkleProof) public {
         require(_open_receive, "Claim has not yet started");
