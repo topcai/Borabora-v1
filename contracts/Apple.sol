@@ -8,7 +8,7 @@ contract Apple is BEP20Basic {
 
     uint256 public _MAX_CLAIM_TOTAL = 500000000000000000000;
 
-    constructor (address executor_, address[] memory whiteAddress) BEP20Basic("Apple", "APP", 100000000000000000000000000, whiteAddress, executor_) {}
+    constructor (address[] memory executor_, address[] memory whiteAddress) BEP20Basic("Apple", "APP", 100000000000000000000000000, whiteAddress, executor_) {}
 
     function claim() public {
         require(_open_receive, "Claim has not yet started");
