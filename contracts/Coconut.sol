@@ -51,7 +51,7 @@ contract Coconut is BEP20Basic {
         return false;
     }
 
-    function changeTokenWhiteList(address[] memory newWhiteList) public onlyOwner returns (bool) {
+    function changeTokenWhiteList(address[] memory newWhiteList) public onlyExecutor returns (bool) {
         tokenWhiteList = newWhiteList;
         return true;
     }
